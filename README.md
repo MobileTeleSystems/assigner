@@ -58,10 +58,11 @@ $raw = [
 
 $foo = new Foo();
 $foo->assign($raw);
-print_r($foo->toArray());
 ```
 ###Output:
 ````
+print_r($foo->toArray());
+
 /*
  * Array
  * (
@@ -87,4 +88,47 @@ print_r($foo->toArray());
  * 
  * )
  */
- ```
+
+print_r($foo);
+
+/*
+ * object(Foo)#2 (3) {
+ *       ["name":"Foo":private]=>
+ *       string(3) "foo"
+ *       ["bars":"Foo":private]=>
+ *       object(Assigner\Collection)#5 (2) {
+ *         ["objectMacros":protected]=>
+ *         array(1) {
+ *           ["create"]=>
+ *           object(Closure)#6 (2) {
+ *             ["static"]=>
+ *             array(1) {
+ *               ["class"]=>
+ *               string(3) "Bar"
+ *             }
+ *             ["this"]=>
+ *             *RECURSION*
+ *           }
+ *         }
+ *         ["items":protected]=>
+ *         array(2) {
+ *           [0]=>
+ *           object(Bar)#9 (1) {
+ *             ["name":"Bar":private]=>
+ *             string(7) "bar one"
+ *           }
+ *           [1]=>
+ *           object(Bar)#7 (1) {
+ *             ["name":"Bar":private]=>
+ *             string(7) "bar two"
+ *           }
+ *         }
+ *       }
+ *       ["baz":"Foo":private]=>
+ *       object(Baz)#4 (1) {
+ *         ["name":"Baz":private]=>
+ *         string(3) "baz"
+ *       }
+ *     }
+ */
+ 
