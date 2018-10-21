@@ -1,0 +1,30 @@
+{
+  "name": "php-utils/assigner",
+  "description": "Assigner",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Vadim Ostapenko",
+      "email": "id3498735@gmail.com"
+    }
+  ],
+  "require": {
+    "php": "^7.1.3",
+    "illuminate/support": "5.*"
+  },
+  "autoload": {
+    "files": [
+      "vendor/illuminate/support/helpers.php"
+    ],
+    "psr-4": {
+      "Assigner\\": "src/",
+      "Test\\":  "test/"
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require-dev": {
+    "phpstan/phpstan": "^0.10.5",
+    "phpunit/phpunit": "^7.4"
+  }
+}
