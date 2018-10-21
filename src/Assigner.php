@@ -46,6 +46,7 @@ trait Assigner
     {
         $item = $this->$property->create();
 
+        //we fill data as is if collection item is not assignable
         if (!$this->isAssignable($item)) {
             foreach ($values as $key => $value) {
                 $this->$property->put($key, $value);
@@ -55,6 +56,7 @@ trait Assigner
         }
 
         foreach ($values as $key => $value) {
+            // skip broken data
             if (!$this->canBeAssigned($value)) {
                 continue;
             }
@@ -68,10 +70,10 @@ trait Assigner
     }
 
     /**
-     * @param string $property
-     * @param string|null $class
+     * @param string $property   - object property to be set
+     * @param string|null $class - type of collection item
      */
-    private function setItemTypeOfCollectionProperty(string $property, string $class = null): void
+    private function initCollection(string $property, string $class = null): void
     {
         $this->$property = new Collection();
         $this->$property->macroObject('create', function () use ($class) {

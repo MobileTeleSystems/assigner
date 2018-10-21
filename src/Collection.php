@@ -9,6 +9,11 @@ use Illuminate\Support\Collection as Base;
 
 /**
  * Class Collection
+ *
+ * Illuminate\Support\Collection provide only global macros
+ * If you want add some methods to Collection object, you should use this class
+ * Local macro will be called before global
+ *
  * @package Assigner
  */
 class Collection extends Base
@@ -50,11 +55,11 @@ class Collection extends Base
     public function __call($method, $parameters)
     {
         if ($this->hasMacroObject($method)) {
-            return $this->run($this->objectMacros[$method], $parameters);
+            return $this->runMacro($this->objectMacros[$method], $parameters);
         }
 
         if (static::hasMacro($method)) {
-            return $this->run(static::$macros[$method], $parameters);
+            return $this->runMacro(static::$macros[$method], $parameters);
         }
 
         throw new BadMethodCallException(sprintf(
@@ -67,7 +72,7 @@ class Collection extends Base
      * @param $parameters
      * @return mixed
      */
-    private function run($macro, $parameters)
+    private function runMacro($macro, $parameters)
     {
         if ($macro instanceof Closure) {
             return call_user_func_array($macro->bindTo($this, static::class), $parameters);
