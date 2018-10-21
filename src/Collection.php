@@ -8,11 +8,8 @@ use BadMethodCallException;
 use Illuminate\Support\Collection as Base;
 
 /**
- * Class Collection
- *
- * Illuminate\Support\Collection provide only global macros
- * If you want add some methods to Collection object, you should use this class
- * Local macro will be called before global
+ * Class Collection provides dynamic methods for object, not only for class.
+ * So different objects of one class can have various implementations of the same method.
  *
  * @package Assigner
  */

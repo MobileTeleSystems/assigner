@@ -1,16 +1,17 @@
 <?php
 
-namespace Assigner;
+namespace Assigner\Traits;
 
 
 use Illuminate\Support\Str;
+use Assigner\Contracts\Assignable;
+use Assigner\Collection;
 
 /**
  * Trait Assigner
  * @package Assigner
  */
 trait Assigner
-
 {
     /**
      * @param array $data
@@ -24,13 +25,19 @@ trait Assigner
                 continue;
             }
 
-            if ($this->isCollection($this->$property) && $this->canBeAssigned($value)) {
-                $this->assignCollection($property, $value);
+            if ($this->isCollection($this->$property)) {
+                if ($this->canBeAssigned($value)) {
+                    $this->assignCollection($property, $value);
+                }
+
                 continue;
             }
 
-            if ($this->isAssignable($this->$property) && $this->canBeAssigned($value)) {
-                $this->$property->assign($value);
+            if ($this->isAssignable($this->$property)) {
+                if ($this->canBeAssigned($value)) {
+                    $this->$property->assign($value);
+                }
+
                 continue;
             }
 
@@ -44,10 +51,8 @@ trait Assigner
      */
     private function assignCollection(string $property, array $values): void
     {
-        $item = $this->$property->create();
-
-        //we fill data as is if collection item is not assignable
-        if (!$this->isAssignable($item)) {
+        // $this->$property instance of Collection with items of any type
+        if (!$this->isAssignable($this->$property->create())) {
             foreach ($values as $key => $value) {
                 $this->$property->put($key, $value);
             }
@@ -70,12 +75,14 @@ trait Assigner
     }
 
     /**
-     * @param string $property   - object property to be set
-     * @param string|null $class - type of collection item
+     * @param string $property
+     * @param string|null $class
      */
     private function initCollection(string $property, string $class = null): void
     {
         $this->$property = new Collection();
+        // here we macro current object with method create(),
+        // that returns new item of Collection or null
         $this->$property->macroObject('create', function () use ($class) {
             return null === $class ? null : new $class;
         });
