@@ -3,9 +3,10 @@
 namespace Assigner\Traits;
 
 
-use Illuminate\Support\Str;
-use Assigner\Contracts\Assignable;
 use Assigner\Collection;
+use Assigner\Contracts\Assignable;
+use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 /**
  * Trait Assigner
@@ -51,8 +52,8 @@ trait Assigner
      */
     private function assignCollection(string $property, array $values): void
     {
-        // $this->$property instance of Collection with items of any type
-        if (!$this->isAssignable($this->$property->create())) {
+        // item of Collection has no type, so we assign it as is
+        if (null === $this->$property->create()) {
             foreach ($values as $key => $value) {
                 $this->$property->put($key, $value);
             }
@@ -77,15 +78,32 @@ trait Assigner
     /**
      * @param string $property
      * @param string|null $class
+     *
+     * @throws InvalidArgumentException
      */
     private function initCollection(string $property, string $class = null): void
     {
         $this->$property = new Collection();
         // here we macro current object with method create(),
         // that returns new item of Collection or null
-        $this->$property->macroObject('create', function () use ($class) {
-            return null === $class ? null : new $class;
-        });
+        $this->$property->macroObject('create',
+            function () use ($class): ?Assignable {
+                if (null === $class) {
+                    return null;
+                }
+
+                if (!class_exists($class)) {
+                    throw new InvalidArgumentException(sprintf('Can not load class: %s', $class));
+                }
+
+                $item = new $class;
+
+                if (!$item instanceof Assignable) {
+                    throw new InvalidArgumentException(sprintf('%s must implement Assignable', $class));
+                }
+
+                return $item;
+            });
     }
 
     /**
