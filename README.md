@@ -9,126 +9,93 @@ This package will be usefull for:
 
 ###Example:
 ```
-use Illuminate\Contracts\Support\Arrayable;
-use Assigner\{Assignable, Assigner, ToArray};
 
-class Bar implements Arrayable, Assignable
+class Foo implements Assignable
 {
-    use Assigner, ToArray;
+    use Assigner;
 
-    private $name;
+    private $firstName;
+    private $theBars;
+
+    public function __construct()
+    {
+        $this->initCollection('theBars', Bar::class);
+    }
 }
 
-class Baz implements Arrayable, Assignable
+class Bar implements Assignable
 {
-    use Assigner, ToArray;
+    use Assigner;
 
-    private $name;
-}
-
-class Foo implements Arrayable, Assignable
-{
-    use Assigner, ToArray;
-
-    private $name;
-    private $bars;
+    private $mainOption;
     private $baz;
 
     public function __construct()
     {
         $this->baz = new Baz;
-        $this->initCollection('bars', Bar::class);
     }
 }
 
-$raw = [
-    'name' => 'foo',
-    'baz'  => [
-        'name' => 'baz'
-    ],
-    'bars' => [
+class Baz implements Assignable
+{
+    use Assigner;
+
+    private $firstValue;
+    private $lastScore;
+}
+
+$input = [
+    'first_name' => 'foo',
+    'the_bars' => [
         [
-            'name' => 'bar one'
+            'main_option' => 'first',
+            'baz' => [
+                'first_value' => 1,
+                'last_score' => 0
+            ]
         ],
         [
-            'name' => 'bar two'
+            'main_option' => 'second',
+            'baz' => [
+                'first_value' => 2,
+                'last_score' => 9
+            ]
         ]
     ]
 ];
 
-$foo = new Foo();
-$foo->assign($raw);
-```
-###Output:
-````
-print_r($foo->toArray());
-
-/*
- * Array
- * (
- *     [name] => foo
- *     [bars] => Array
- *         (
- *             [0] => Array
- *                 (
- *                     [name] => bar one
- *                 )
- * 
- *             [1] => Array
- *                 (
- *                     [name] => bar two
- *                 )
- * 
- *        )
- * 
- *     [baz] => Array
- *         (
- *             [name] => baz
- *         )
- * 
- * )
- */
+$foo = new Foo;
+$foo->assign($input);
 
 print_r($foo);
 
-/*
- * object(Foo)#2 (3) {
- *       ["name":"Foo":private]=>
- *       string(3) "foo"
- *       ["bars":"Foo":private]=>
- *       object(Assigner\Collection)#5 (2) {
- *         ["objectMacros":protected]=>
- *         array(1) {
- *           ["create"]=>
- *           object(Closure)#6 (2) {
- *             ["static"]=>
- *             array(1) {
- *               ["class"]=>
- *               string(3) "Bar"
- *             }
- *             ["this"]=>
- *             *RECURSION*
- *           }
- *         }
- *         ["items":protected]=>
- *         array(2) {
- *           [0]=>
- *           object(Bar)#9 (1) {
- *             ["name":"Bar":private]=>
- *             string(7) "bar one"
- *           }
- *           [1]=>
- *           object(Bar)#7 (1) {
- *             ["name":"Bar":private]=>
- *             string(7) "bar two"
- *           }
- *         }
- *       }
- *       ["baz":"Foo":private]=>
- *       object(Baz)#4 (1) {
- *         ["name":"Baz":private]=>
- *         string(3) "baz"
- *       }
- *     }
- */
- 
+// Array
+//(
+//    [name] => foo
+//    [bars] => Array
+//        (
+//            [0] => Array
+//                (
+//                    [option] => first
+//                    [baz] => Array
+//                        (
+//                            [value] => 1
+//                            [score] => 0
+//                        )
+//
+//                )
+//
+//            [1] => Array
+//                (
+//                    [option] => second
+//                    [baz] => Array
+//                        (
+//                            [value] => 2
+//                            [score] => 9
+//                        )
+//
+//                )
+//
+//        )
+//
+//)
