@@ -7,7 +7,11 @@ This package will be usefull for:
 2. fast assign object properties
 3. DTO
 
-###Example:
+## Run Example
+
+./example.sh
+
+### Example:
 ```
 class Address implements Assignable {
     use Assigner;
