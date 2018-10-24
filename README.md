@@ -9,93 +9,113 @@ This package will be usefull for:
 
 ###Example:
 ```
+class Address implements Assignable {
+    use Assigner;
 
-class Foo implements Assignable
-{
+    private $city;
+    private $street;
+}
+
+class Person implements Assignable {
     use Assigner;
 
     private $firstName;
-    private $theBars;
+    private $lastName;
+    private $address;
+    private $friends;
 
     public function __construct()
     {
-        $this->initCollection('theBars', Bar::class);
+        $this->address = new Address;
+        $this->initCollection('friends', static::class);
     }
 }
 
-class Bar implements Assignable
+$input = <<<JSN
 {
-    use Assigner;
-
-    private $mainOption;
-    private $baz;
-
-    public function __construct()
+  "first_name": "John",
+  "last_name": "Doe",
+  "address": {
+    "city": "London",
+    "street": "Baker"
+  },
+  "friends": [
     {
-        $this->baz = new Baz;
+      "first_name": "Jack",
+      "last_name": "London",
+      "address": {
+        "city": "Liverpool",
+        "street": "Green"
+      }
+    },
+    {
+      "first_name": "Mary",
+      "last_name": "Simpson",
+      "address": {
+        "city": "Springfield",
+        "street": "Grey"
+      },
+      "friends":  [
+        {
+          "first_name": "Brad",
+          "last_name":  "Brown"
+        }
+      ]
     }
+  ]
 }
+JSN;
 
-class Baz implements Assignable
-{
-    use Assigner;
+$person = new Person;
+$person->assign(json_decode($input, true));
 
-    private $firstValue;
-    private $lastScore;
-}
+dump($person);
 
-$input = [
-    'first_name' => 'foo',
-    'the_bars' => [
-        [
-            'main_option' => 'first',
-            'baz' => [
-                'first_value' => 1,
-                'last_score' => 0
-            ]
-        ],
-        [
-            'main_option' => 'second',
-            'baz' => [
-                'first_value' => 2,
-                'last_score' => 9
-            ]
-        ]
-    ]
-];
-
-$foo = new Foo;
-$foo->assign($input);
-
-print_r($foo);
-
-// Array
-//(
-//    [name] => foo
-//    [bars] => Array
-//        (
-//            [0] => Array
-//                (
-//                    [option] => first
-//                    [baz] => Array
-//                        (
-//                            [value] => 1
-//                            [score] => 0
-//                        )
+// OUTPUT
 //
-//                )
-//
-//            [1] => Array
-//                (
-//                    [option] => second
-//                    [baz] => Array
-//                        (
-//                            [value] => 2
-//                            [score] => 9
-//                        )
-//
-//                )
-//
-//        )
-//
-//)
+// Person {#2
+//  -firstName: "John"
+//  -lastName: "Doe"
+//  -address: Address {#4
+//    -city: "London"
+//    -street: "Baker"
+//  }
+//  -friends: Assigner\Collection {#5
+//    #items: array:2 [
+//      0 => Person {#12
+//        -firstName: "Jack"
+//        -lastName: "London"
+//        -address: Address {#13
+//          -city: "Liverpool"
+//          -street: "Green"
+//        }
+//        -friends: Assigner\Collection {#14
+//          #items: []
+//        }
+//      }
+//      1 => Person {#16
+//        -firstName: "Mary"
+//        -lastName: "Simpson"
+//        -address: Address {#17
+//          -city: "Springfield"
+//          -street: "Grey"
+//        }
+//        -friends: Assigner\Collection {#18
+//          #items: array:1 [
+//            0 => Person {#24
+//              -firstName: "Brad"
+//              -lastName: "Brown"
+//              -address: Address {#25
+//                -city: null
+//                -street: null
+//              }
+//              -friends: Assigner\Collection {#26
+//                #items: []
+//              }
+//            }
+//          ]
+//        }
+//      }
+//    ]
+//  }
+//}
