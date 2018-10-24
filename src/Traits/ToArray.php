@@ -1,6 +1,6 @@
 <?php
 
-namespace Assigner;
+namespace Assigner\Traits;
 
 
 use Illuminate\Contracts\Support\Arrayable;

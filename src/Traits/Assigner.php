@@ -30,7 +30,6 @@ trait Assigner
                 if ($this->canBeAssigned($value)) {
                     $this->assignCollection($property, $value);
                 }
-
                 continue;
             }
 
@@ -38,7 +37,6 @@ trait Assigner
                 if ($this->canBeAssigned($value)) {
                     $this->$property->assign($value);
                 }
-
                 continue;
             }
 
@@ -47,57 +45,63 @@ trait Assigner
     }
 
     /**
-     * @param string $property
+     * @param string $collection
      * @param array $values
      */
-    private function assignCollection(string $property, array $values): void
+    private function assignCollection(string $collection, array $values): void
     {
-        // item of Collection has no type, so we assign it as is
-        if (null === $this->$property->create()) {
-            foreach ($values as $key => $value) {
-                $this->$property->put($key, $value);
-            }
+        $this->isAssignable($this->$collection->createItem()) ?
+            $this->fillCollectionWithAssignable($collection, $values) :
+            $this->fillCollection($collection, $values);
+    }
 
-            return;
-        }
-
+    /**
+     * @param string $collection
+     * @param array $values
+     */
+    private function fillCollection(string $collection, array $values): void
+    {
         foreach ($values as $key => $value) {
-            // skip broken data
-            if (!$this->canBeAssigned($value)) {
-                continue;
-            }
-
-            /** @var Assignable $item */
-            $item = $this->$property->create();
-            $item->assign($value);
-
-            $this->$property->put($key, $item);
+            $this->$collection->put($key, $value);
         }
     }
 
     /**
-     * @param string $property
+     * @param string $collection
+     * @param array $values
+     */
+    private function fillCollectionWithAssignable(string $collection, array $values): void
+    {
+        foreach ($values as $key => $value) {
+            if (!$this->canBeAssigned($value)) {
+                continue;
+            }
+            /** @var Assignable $item */
+            $item = $this->$collection->createItem();
+            $item->assign($value);
+
+            $this->$collection->put($key, $item);
+        }
+    }
+
+    /**
+     * @param string $collection
      * @param string|null $class
      *
      * @throws InvalidArgumentException
      */
-    private function initCollection(string $property, string $class = null): void
+    private function initCollection(string $collection, string $class = null): void
     {
-        $this->$property = new Collection();
-        // here we macro current object with method create(),
-        // that returns new item of Collection or null
-        $this->$property->macroObject('create',
+        $this->$collection = new Collection();
+        $this->$collection->macroObject('createItem',
             function () use ($class): ?Assignable {
                 if (null === $class) {
                     return null;
                 }
-
                 if (!class_exists($class)) {
                     throw new InvalidArgumentException(sprintf('Can not load class: %s', $class));
                 }
-
                 $item = new $class;
-
                 if (!$item instanceof Assignable) {
                     throw new InvalidArgumentException(sprintf('%s must implement Assignable', $class));
                 }

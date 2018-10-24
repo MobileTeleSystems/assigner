@@ -17,7 +17,7 @@ trait MacroableObject
      *
      * @var array
      */
-    protected $objectMacros = [];
+    private $objectMacros = [];
 
     /**
      * Register a custom macro.

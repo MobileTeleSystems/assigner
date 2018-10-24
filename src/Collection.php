@@ -21,10 +21,8 @@ class Collection extends Base
      */
     public function __call($method, $parameters)
     {
-        if ($this->hasMacroObject($method)) {
-            $this->objectMacrosCall($method, $parameters);
-        } else {
+        return $this->hasMacroObject($method) ?
+            $this->objectMacrosCall($method, $parameters) :
             parent::__call($method, $parameters);
-        }
     }
 }
