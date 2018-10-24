@@ -3,11 +3,13 @@
 namespace Assigner\Contracts;
 
 
+use Illuminate\Contracts\Support\Arrayable;
+
 /**
  * Interface Assignable
  * @package Assigner
  */
-interface Assignable
+interface Assignable extends Arrayable
 {
     /**
      * @param array $data
