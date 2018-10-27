@@ -5,7 +5,6 @@ namespace Assigner\Traits;
 
 use Assigner\Collection;
 use Assigner\Contracts\Assignable;
-use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 
@@ -21,7 +20,7 @@ trait Assigner
     public function assign(array $data): void
     {
         foreach ($data as $key => $value) {
-            $property = $this->transformInput($key);
+            $property = $this->transformInputProperty($key);
 
             if (!property_exists($this, $property)) {
                 continue;
@@ -43,21 +42,6 @@ trait Assigner
 
             $this->$property = $value;
         }
-    }
-
-    /**
-     * @return array
-     */
-    public function toArray(): array
-    {
-        $array = [];
-
-        foreach (get_object_vars($this) as $property => $value) {
-            $key = $this->transformOutput($property);
-            $array[$key] = $value instanceof Arrayable ? $value->toArray() : $value;
-        }
-
-        return $array;
     }
 
     /**
@@ -157,17 +141,8 @@ trait Assigner
      * @param $value
      * @return string
      */
-    private function transformInput($value): string
+    private function transformInputProperty($value): string
     {
         return Str::camel($value);
-    }
-
-    /**
-     * @param $value
-     * @return string
-     */
-    private function transformOutput($value): string
-    {
-        return Str::snake($value);
     }
 }
