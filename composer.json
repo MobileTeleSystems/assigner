@@ -1,6 +1,6 @@
 {
   "name": "php-utils/assigner",
-  "description": "Assigner",
+  "description": "Data transfer objects, recursive assign object properties",
   "license": "MIT",
   "authors": [
     {

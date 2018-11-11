@@ -1,11 +1,26 @@
 # Assigner
 
 Assigner works recursively, so it is easy to transform nested array to nested objects.
+Supports Laravel Collections.
 
 This package will be usefull for:
 1. parsing json to objects
-2. fast assign object properties
+2. fast recursive assign object properties
 3. DTO
+
+## Installation
+
+    composer require php-utils/assigner
+
+## Usage
+
+Everything you need to do is:
+```
+class YourClass implements Assigner\Contracts\Assignab
+{
+    use Assigner\Traits\Assigner;
+}
+```
 
 ## Run Example
 
