@@ -16,8 +16,7 @@ This package will be usefull for:
 
 Everything you need to do is:
 ```
-class YourClass implements Assigner\Contracts\Assignab
-{
+class YourClass implements Assigner\Contracts\Assignable {
     use Assigner\Traits\Assigner;
 }
 ```
